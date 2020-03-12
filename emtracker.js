@@ -142,9 +142,20 @@ const addRoles = [
 const updateEmployeeRole = [
     {
         type: "input",
-        name: "updateRole",
-        message: "What is the new employee role?",
+        name: "Name",
+        message: "What is the employee name?"
     },
+    {
+        type: "input",
+        name: "oldRole",
+        message: "What is the employee current role?"
+    },
+    {
+        type: "input",
+        name: "updateRole",
+        message: "What is the new employee role?"
+    }
+  
 ];
 // function promptQuestion() {
 
@@ -161,9 +172,10 @@ function promptAddEmployee() {
             let role_id;
             //console.log(managerName)
             connection.query("SELECT * FROM employee WHERE first_name=? AND last_name=?", [managerName[0], managerName[1]], function (err, res) {
-                console.log(res)
+               // console.log(res)
                 manager_id = res[0].id;
                 connection.query("SELECT * FROM employeeRole WHERE title=?", [employeeAnswers.role], function (err, res) {
+                    console.log(res)
                     role_id = res[0].id
                     connection.query("INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)", [first_Name, lastName, role_id, manager_id], function (err, res) {
                         if (err)
@@ -171,7 +183,9 @@ function promptAddEmployee() {
                         console.log([first_Name, lastName, role_id, manager_id]);
                         console.log("Employee added Successfully!");
 
-                        promptQuestion();
+                        promptQuestion(
+                            
+                        );
 
                     })
 
@@ -245,12 +259,15 @@ function promptRoles() {
 }
 //////////////////////////////////////finish update role
 function promptUpdateRole() {
-    connection.query("SELECT name FROM department", function (err, res) {
+    inquirer.prompt(updateEmployeeRole)
+    connection.query("SELECT title FROM employeeRole", function (err, res) {
         if (err) throw err;
+        //console.log("worked")
         console.table(res)
         promptQuestion();
+        
     })
-}
+};
 ///////////////////////////////////////////
 
 
