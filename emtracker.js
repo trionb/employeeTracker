@@ -24,7 +24,7 @@ function promptQuestion() {
         choices: [
             "View all Employees",
             "View all Departments",
-            "View all Employees By Manager",
+            // "View all Employees By Manager",
             "View Employee Roles",
             "Add Employee",
             "Add Department",
@@ -40,9 +40,9 @@ function promptQuestion() {
             case "View all Departments":
                 promptDepartment();
                 break;
-            case "View all Employees By Manager":////////// bonus
-                promptManager();
-                break;
+            // case "View all Employees By Manager":////////// bonus
+            //     promptManager();
+            //     break;
             case "View Employee Roles":
                 promptRoles();
                 break;
