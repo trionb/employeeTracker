@@ -106,10 +106,10 @@ const addEmployeeQuestion = [
         type: "list",
         name: "employeeManager",
         message: "who is the employee manager?",
-        choices:["Curtis Jackson",
-                 "Nipsey Hussle",
-                 "Tupac Shakur"
-    ]
+        choices: ["Curtis Jackson",
+            "Nipsey Hussle",
+            "Tupac Shakur"
+        ]
     }
 ];
 
@@ -134,9 +134,17 @@ const addRoles = [
         message: "What is the employee role salary?",
     },
     {
-        type: "input",
+        type: "list",
         name: "dept",
         message: "What is the employee role department?",
+        choices: ["1 Sales Lead",
+            "2 Salesperson",
+            "3 Lead Engineer",
+            "4 Software Engineer",
+            "5 Accountant",
+            "6 Legal Team Lead",
+            "7 Lawyer"
+        ]
     }
 ];
 const updateEmployeeRole = [
@@ -155,7 +163,7 @@ const updateEmployeeRole = [
         name: "updateRole",
         message: "What is the new employee role?"
     }
-  
+
 ];
 // function promptQuestion() {
 
@@ -172,7 +180,7 @@ function promptAddEmployee() {
             let role_id;
             //console.log(managerName)
             connection.query("SELECT * FROM employee WHERE first_name=? AND last_name=?", [managerName[0], managerName[1]], function (err, res) {
-               // console.log(res)
+                // console.log(res)
                 manager_id = res[0].id;
                 connection.query("SELECT * FROM employeeRole WHERE title=?", [employeeAnswers.role], function (err, res) {
                     console.log(res)
@@ -184,7 +192,7 @@ function promptAddEmployee() {
                         console.log("Employee added Successfully!");
 
                         promptQuestion(
-                            
+
                         );
 
                     })
@@ -204,7 +212,8 @@ function promptAddEmployee() {
 function promptAddDepartment() {
     inquirer.prompt(addDepartment)
         .then(function (deptAnswers) {
-            const department = (deptAnswers.name)
+            const department = (deptAnswers.addDept)
+            console.log(department)
             team.push(department)
             connection.query("INSERT INTO department (name) VALUES (?)", [deptAnswers.addDept], function (err, res) {
                 if (err)
@@ -221,8 +230,10 @@ function promptAddRole() {
         .then(function (rolesAnswers) {
             const roles = (rolesAnswers.title, rolesAnswers.salary, rolesAnswers.dept)
             team.push(roles)
-            connection.query("Select * FROM department", function (err, res) {
-
+            let dept_id = rolesAnswers.dept.split(" ")
+            connection.query("Insert INTO employeeRole (title,salary,department_id) VALUES (?,?,?)", [rolesAnswers.title, rolesAnswers.salary, parseInt(dept_id[0])], function (err, res) {
+                if (err)
+                    throw err;
             })
             promptQuestion();
             console.log("Role added Successfully!")
@@ -260,13 +271,24 @@ function promptRoles() {
 //////////////////////////////////////finish update role
 function promptUpdateRole() {
     inquirer.prompt(updateEmployeeRole)
-    connection.query("SELECT title FROM employeeRole", function (err, res) {
-        if (err) throw err;
-        //console.log("worked")
-        console.table(res)
-        promptQuestion();
-        
-    })
+        .then(function (employeeAnswers) {
+            let first_Name = employeeName[0]
+            let lastName = employeeName[1]
+            let employeeName = employeeAnswers.employee.Name.split(" ")
+
+            connection.query("SELECT first_name,lastName, FROM employee WHERE first_Name=? AND lastName=?) VALUES (?,?)", [first_Name, lastName], function (err, res) {
+
+            let currentEmployee=res[0]
+            connection.query("UPDATE title SET employeeRole WHERE department_id=? VALUES(?)"[currentEmployee.department_id],function(err,res){
+                if (err) 
+                  throw err;
+                console.log("worked")
+                //console.table(res)
+                promptQuestion();
+            })
+
+            })
+        })
 };
 ///////////////////////////////////////////
 
