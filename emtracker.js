@@ -99,7 +99,7 @@ const addEmployeeQuestion = [
 const addDepartment = [
     {
         type: "input",
-        name: "name",
+        name: "addDept",
         message: "what department would you like to add?"
 
     }
@@ -128,20 +128,30 @@ const addRoles = [
 function promptAddEmployee() {
     inquirer.prompt(addEmployeeQuestion)
         .then(function (employeeAnswers) {
-            const employee = (employeeAnswers.firstName, employeeAnswers.lastName, employeeAnswers.role, employeeAnswers.employeeManager)
-            team.push(employee)
-            //connection.query("INSERT INTO employee()"
+            let first_Name = employeeAnswers.firstName
+            let lastName = employeeAnswers.lastName
+            let role_id = employeeAnswers.role
+            let manager_id = employeeAnswers.employeemanager
+            connection.query("INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)", [first_Name, lastName, role_id, manager_id], function (err, res) {
+                if (err)
+                    throw err;
+            })
+            console.log("Employee added Successfully!");
+
             promptQuestion();
-            console.log("Employee added Successfully!")
-        }
-        )
+        });
+
+
 };
 function promptAddDepartment() {
     inquirer.prompt(addDepartment)
         .then(function (deptAnswers) {
             const department = (deptAnswers.name)
             team.push(department)
-            //connection.query("INSERT INTO employee("
+            connection.query("INSERT INTO department (name) VALUES (?)", [deptAnswers.addDept], function (err, res) {
+                if (err)
+                    throw err;
+            })
             promptQuestion();
             console.log("Department added Successfully!")
         }
@@ -152,12 +162,15 @@ function promptAddRole() {
         .then(function (rolesAnswers) {
             const roles = (rolesAnswers.title, rolesAnswers.salary, rolesAnswers.dept)
             team.push(roles)
-            //connection.query("INSERT INTO employee("
+            connection.query("Select * FROM department", function (err, res) {
+
+            })
             promptQuestion();
             console.log("Role added Successfully!")
         }
         )
 };
+
 //view employees
 function promptEmployee() {
     connection.query("SELECT employee.id, employee.first_name, employee.last_name,employeeRole.title, department.name, employeeRole.salary, employee.manager_id FROM employee INNER JOIN employeeRole ON employeeRole.id = employee.role_id INNER JOIN department ON department.id = employeeRole.department_id", function (err, res) {
