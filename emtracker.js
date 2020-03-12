@@ -41,7 +41,7 @@ function promptQuestion() {
             case "View all Departments":
                 promptDepartment();
                 break;
-            case "View all Employees By Manager":
+            case "View all Employees By Manager":////////// bonus
                 promptManager();
                 break;
             case "View Employee Roles":
@@ -71,6 +71,20 @@ const viewEmployee = [
         type: "input",
         name: "viewEmp",
         message: "View all employees"
+    },
+];
+const viewDepartment = [
+    {
+        type: "input",
+        name: "viewDept",
+        message: "View all Departments"
+    },
+];
+const viewRoles = [
+    {
+        type: "input",
+        name: "viewRoles",
+        message: "View all Roles"
     },
 ];
 const addEmployeeQuestion = [
@@ -122,9 +136,17 @@ const addRoles = [
         message: "What is the employee role department?",
     }
 ];
+const updateEmployeeRole = [
+    {
+        type: "input",
+        name: "updateRole",
+        message: "What is the new employee role?",
+    },
+];
 // function promptQuestion() {
 
 // };
+/////add employee//////
 function promptAddEmployee() {
     inquirer.prompt(addEmployeeQuestion)
         .then(function (employeeAnswers) {
@@ -143,6 +165,7 @@ function promptAddEmployee() {
 
 
 };
+///add department////
 function promptAddDepartment() {
     inquirer.prompt(addDepartment)
         .then(function (deptAnswers) {
@@ -157,6 +180,7 @@ function promptAddDepartment() {
         }
         )
 };
+//add roles////
 function promptAddRole() {
     inquirer.prompt(addRoles)
         .then(function (rolesAnswers) {
@@ -171,22 +195,42 @@ function promptAddRole() {
         )
 };
 
-//view employees
+//view employees//////
 function promptEmployee() {
+    inquirer.prompt(viewEmployee)
     connection.query("SELECT employee.id, employee.first_name, employee.last_name,employeeRole.title, department.name, employeeRole.salary, employee.manager_id FROM employee INNER JOIN employeeRole ON employeeRole.id = employee.role_id INNER JOIN department ON department.id = employeeRole.department_id", function (err, res) {
         if (err) throw err;
         console.table(res)
         promptQuestion();
     })
 }
+////view all departments/////
 function promptDepartment() {
+    inquirer.prompt(viewDepartment)
     connection.query("SELECT name FROM department", function (err, res) {
         if (err) throw err;
         console.table(res)
         promptQuestion();
     })
 }
-
+////////////view all roles
+function promptRoles() {
+    inquirer.prompt(viewRoles)
+    connection.query("SELECT name FROM employeeRole", function (err, res) {
+        if (err) throw err;
+        console.table(res)
+        promptQuestion();
+    })
+}
+//////////////////////////////////////finish update role
+function promptUpdateRole() {
+    connection.query("SELECT name FROM department", function (err, res) {
+        if (err) throw err;
+        console.table(res)
+        promptQuestion();
+    })
+}
+///////////////////////////////////////////
 
 
 //     inquirer.prompt( viewEmployee)
