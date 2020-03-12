@@ -7,7 +7,6 @@ require('dotenv').config()
 let team = []
 var connection = mysql.createConnection({
     host: "localhost",
-    port: 3000,
     user: "root",
     password: process.env.MYSQL_PASS,
     database: process.env.DB_NAME
@@ -104,9 +103,13 @@ const addEmployeeQuestion = [
         message: "what is the employee role?"
     },
     {
-        type: "input",
+        type: "list",
         name: "employeeManager",
-        message: "who is the employee manager?"
+        message: "who is the employee manager?",
+        choices:["Curtis Jackson",
+                 "Nipsey Hussle",
+                 "Tupac Shakur"
+    ]
     }
 ];
 
@@ -148,19 +151,37 @@ const updateEmployeeRole = [
 // };
 /////add employee//////
 function promptAddEmployee() {
+    //console.log("ran prompt employee")
     inquirer.prompt(addEmployeeQuestion)
         .then(function (employeeAnswers) {
             let first_Name = employeeAnswers.firstName
             let lastName = employeeAnswers.lastName
-            let role_id = employeeAnswers.role
-            let manager_id = employeeAnswers.employeemanager
-            connection.query("INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)", [first_Name, lastName, role_id, manager_id], function (err, res) {
-                if (err)
-                    throw err;
-            })
-            console.log("Employee added Successfully!");
+            let managerName = employeeAnswers.employeeManager.split(" ")
+            let manager_id;
+            let role_id;
+            //console.log(managerName)
+            connection.query("SELECT * FROM employee WHERE first_name=? AND last_name=?", [managerName[0], managerName[1]], function (err, res) {
+                console.log(res)
+                manager_id = res[0].id;
+                connection.query("SELECT * FROM employeeRole WHERE title=?", [employeeAnswers.role], function (err, res) {
+                    role_id = res[0].id
+                    connection.query("INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)", [first_Name, lastName, role_id, manager_id], function (err, res) {
+                        if (err)
+                            throw err;
+                        console.log([first_Name, lastName, role_id, manager_id]);
+                        console.log("Employee added Successfully!");
 
-            promptQuestion();
+                        promptQuestion();
+
+                    })
+
+                })
+
+
+            })
+
+
+
         });
 
 
@@ -216,7 +237,7 @@ function promptDepartment() {
 ////////////view all roles
 function promptRoles() {
     inquirer.prompt(viewRoles)
-    connection.query("SELECT name FROM employeeRole", function (err, res) {
+    connection.query("SELECT title FROM employeeRole", function (err, res) {
         if (err) throw err;
         console.table(res)
         promptQuestion();
@@ -252,4 +273,3 @@ function promptUpdateRole() {
 
 
 
-promptQuestion()

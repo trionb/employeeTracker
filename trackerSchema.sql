@@ -16,7 +16,7 @@ CREATE TABLE employeeRole(
     salary DECIMAL(10,3) NOT NULL,
     department_id INT NOT NULL,
     PRIMARY KEY(id)
-    -- FOREIGN KEY (department_id) REFERENCES deptartment(id)
+    FOREIGN KEY (department_id) REFERENCES deptartment(id)
     
 );
 
@@ -27,8 +27,8 @@ CREATE TABLE employee(
     role_id INT NOT NULL,
     manager_id INT DEFAULT NULL,
 	  PRIMARY KEY(id)
-    -- FOREIGN KEY (role_id) REFERENCES employeeRole(id),
-    -- FOREIGN KEY (manager_id) REFERENCES employee(id)
+   FOREIGN KEY (role_id) REFERENCES employeeRole(id),
+   FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
 
 SELECT * FROM employee.id, employee.first_name, employee.last_name,employeeRole.title, department.name, employeeRole.salary, employee.manager_id FROM employee INNER JOIN employeeRole ON employeeRole.id = employee.role_id INNER JOIN department ON department.id = employeeRole.department_id
