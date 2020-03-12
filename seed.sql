@@ -18,5 +18,20 @@ VALUES("Legal Team Lead", 150000.00, 6);
 INSERT INTO employeeRole(title, salary, department_id)
 VALUES("Lawyer", 180000.00, 7);
 
-INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES("Robert", "Williams", 4,3),("Nipsey", "Hussle", 5,null),("Benjamin", "Franklin", 2,1), ("Curtis", "Jackson", 1,null),("Christopher", "Wallace", 6,null),("Nia", "Long", 7,6),("Tupac", "Shakur", 3,null);
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Robert", "Williams", 4,3)
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Nipsey", "Hussle", 5);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Benjamin", "Franklin", 2,1);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Curtis", "Jackson", 1,null);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Christopher", "Wallace", 6,null);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Nia", "Long", 7,6);
+
+INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES("Tupac", "Shakur", 3,null);
+
+
+
+

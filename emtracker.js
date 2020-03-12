@@ -4,10 +4,10 @@ let Ctable = require("console.table");
 const fs = require("fs");
 require('dotenv').config()
 
-let team=[]
+let team = []
 var connection = mysql.createConnection({
     host: "localhost",
-    port: 3306,
+    port: 3000,
     user: "root",
     password: process.env.MYSQL_PASS,
     database: process.env.DB_NAME
@@ -15,16 +15,64 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    askQuestions();
+    promptQuestion();
 });
+function promptQuestion() {
+    inquirer.prompt([{
+        type: "list",
+        name: "Option",
+        message: "What would you like to do?",
+        choices: [
+            "View all Employees",
+            "View all Departments",
+            "View all Employees By Manager",
+            "View Employee Roles",
+            "Add Employee",
+            "Add Department",
+            "Add Role",
+            "Update Employee Role",
+            "Exit"
+        ]
+    }]).then(function (promptAnswers) {
+        switch (promptAnswers.Option) {
+            case "View all Employees":
+                promptEmployee();
+                break;
+            case "View all Departments":
+                promptDepartment();
+                break;
+            case "View all Employees By Manager":
+                promptManager();
+                break;
+            case "View Employee Roles":
+                promptRoles();
+                break;
+            case "Add Employee":
+                promptAddEmployee();
+                break;
+            case "Add Department":
+                promptAddDepartment();
+                break;
+            case "Add Role":
+                promptAddRole();
+                break;
+            case "Update employee Role":
+                promptUpdateRole();
+                break;
+            default: "Exit"
+                promptQuestion();
+                break;
 
-function askQuestions() {
-    connection.query("SELECT * FROM employee", function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        connection.end();
-    });
+        }
+    })
 }
+const viewEmployee = [
+    {
+        type: "input",
+        name: "viewEmp",
+        message: "View all employees"
+    },
+];
 const addEmployeeQuestion = [
     {
         type: "input",
@@ -74,70 +122,24 @@ const addRoles = [
         message: "What is the employee role department?",
     }
 ];
-function promptQuestion() {
-    inquirer.prompt([{
-        type: "list",
-        name: "Option",
-        message: "What would you like to do?",
-        choices:[
-            "View all Employees",
-            "View all Employees By Department",
-            "View all Employees By Manager",
-            "View Employee Roles",
-            "Add Employee",
-            "Add Department",
-            "Add Role",
-            "Update Employee Role",
-            "Exit"
-        ]
-    }]).then(function (promptAnswers) {
-        switch (promptAnswers.Option) {
-            case "View all Employees":
-                promptEmployees();
-                break;
-            case "View all Employees By Department":
-                promptDepartment();
-                break;
-            case "View all Employees By Manager":
-                promptManager();
-                break;
-            case "View Employee Roles":
-                promptRoles();
-                break;
-            case "Add Employee":
-                promptAddEmployee();
-                break;
-            case "Add Department":
-                promptAddDepartment();
-                break;
-            case "Add Role":
-                promptAddRole();
-                break;
-            case "Update employee Role":
-                promptUpdateRole();
-                break;
-            default:"Exit"
-                promptQuestion();
-                break;
+// function promptQuestion() {
 
-        }
-    })
-};
+// };
 function promptAddEmployee() {
     inquirer.prompt(addEmployeeQuestion)
         .then(function (employeeAnswers) {
-            const employee=(employeeAnswers.firstName, employeeAnswers.lastName,employeeAnswers.role,employeeAnswers.employeeManager)
+            const employee = (employeeAnswers.firstName, employeeAnswers.lastName, employeeAnswers.role, employeeAnswers.employeeManager)
             team.push(employee)
-            //connection.query("INSERT INTO employee("
+            //connection.query("INSERT INTO employee()"
             promptQuestion();
             console.log("Employee added Successfully!")
         }
         )
 };
 function promptAddDepartment() {
-    inquirer.prompt( addDepartment)
+    inquirer.prompt(addDepartment)
         .then(function (deptAnswers) {
-            const department=(deptAnswers.name)
+            const department = (deptAnswers.name)
             team.push(department)
             //connection.query("INSERT INTO employee("
             promptQuestion();
@@ -146,9 +148,9 @@ function promptAddDepartment() {
         )
 };
 function promptAddRole() {
-    inquirer.prompt( addRoles)
+    inquirer.prompt(addRoles)
         .then(function (rolesAnswers) {
-            const roles=(rolesAnswers.title, rolesAnswers.salary, rolesAnswers.dept)
+            const roles = (rolesAnswers.title, rolesAnswers.salary, rolesAnswers.dept)
             team.push(roles)
             //connection.query("INSERT INTO employee("
             promptQuestion();
@@ -156,20 +158,38 @@ function promptAddRole() {
         }
         )
 };
+//view employees
+function promptEmployee() {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name,employeeRole.title, department.name, employeeRole.salary, employee.manager_id FROM employee INNER JOIN employeeRole ON employeeRole.id = employee.role_id INNER JOIN department ON department.id = employeeRole.department_id", function (err, res) {
+        if (err) throw err;
+        console.table(res)
+        promptQuestion();
+    })
+}
+function promptDepartment() {
+    connection.query("SELECT name FROM department", function (err, res) {
+        if (err) throw err;
+        console.table(res)
+        promptQuestion();
+    })
+}
 
-// "View all Employees"
-// function promptEmployees() {
+
+
 //     inquirer.prompt( viewEmployee)
 //         .then(function (viewEmpAnswers) {
-//             const viewEmp=(viewEmpAnswers.)
+//             const viewEmp=(viewEmpAnswers)
 //             team.push(viewEmp)
-//             //connection.query("INSERT INTO employee("
-//             promptQuestion();
+//             connection.query("SELECT * FROM employee", function (err, data) {
+//                 if (err) {
+//             console.log(data)
 //             console.log("Role added Successfully!")
+//             promptQuestion();
 //         }
-//         )
-// };
+//     });
+//   });
 
+//}
 
 
 
